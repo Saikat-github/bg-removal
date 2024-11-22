@@ -7,7 +7,7 @@ import connectDB from './config/mongodb.js';
 //App Config
 const PORT = process.env.PORT || 4000;
 const app = express();
-await connectDB()
+connectDB()
 
 //Initialize middleware
 app.use(express.json());
@@ -21,9 +21,9 @@ app.get('/', (req, res) => {
     res.send("API working")
 });
 
-// app.use((req, res, next) => {
-//     res.status(404).json({ error: "Route not found" });
-// });
+app.use((req, res, next) => {
+    res.status(404).json({ error: "Route not found" });
+});
 
 
 
