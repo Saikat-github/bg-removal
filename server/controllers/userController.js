@@ -19,15 +19,16 @@ const clerkWebhooks = async (req, res) => {
 
         switch (type) {
             case "user.created": {
-                const userData = {
+                const newUser = new userModel({
                     clerkId: data.id,
                     email:data.email_addresses[0].email_address,
                     firstName: data.first_name,
                     lastName: data.last_name,
                     photo: data.image_url,
-                }
+                })
 
-                await userModel.create(userData);
+                // await userModel.create(userData);
+                await newUser.save()
                 res.json({})
 
                 break;
