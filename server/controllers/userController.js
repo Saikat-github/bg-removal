@@ -5,62 +5,62 @@ import userModel from '../models/userModel.js';
 
 const clerkWebhooks = async (req, res) => {
     try {
-        // //Create a Svix instance with clerk webhook secret
-        // const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRETk);
+        //Create a Svix instance with clerk webhook secret
+        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-        // await whook.verify(JSON.stringify(req.body), {
-        //     "svix_id":req.headers["svix-id"],
-        //     "svix-timestamp":req.headers["svix-timestamp"],
-        //     "svix-signature":req.headers["svix-signature"]
-        // })
+        await whook.verify(JSON.stringify(req.body), {
+            "svix_id":req.headers["svix-id"],
+            "svix-timestamp":req.headers["svix-timestamp"],
+            "svix-signature":req.headers["svix-signature"]
+        })
 
-        // const {data, type} = req.body;
-        // console.log(data, type);
+        const {data, type} = req.body;
+        console.log(data, type);
 
-        // switch (type) {
-        //     case "user.created": {
-        //         const newUser = new userModel({
-        //             clerkId: data.id,
-        //             email:data.email_addresses[0].email_address,
-        //             firstName: data.first_name,
-        //             lastName: data.last_name,
-        //             photo: data.image_url,
-        //         })
+        switch (type) {
+            case "user.created": {
+                const newUser = new userModel({
+                    clerkId: data.id,
+                    email:data.email_addresses[0].email_address,
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                    photo: data.image_url,
+                })
 
-        //         // await userModel.create(userData);
-        //         await newUser.save()
-        //         res.json({})
+                // await userModel.create(userData);
+                await newUser.save()
+                res.json({})
 
-        //         break;
-        //     }
+                break;
+            }
 
-        //     case "user.updated": {
-        //         const userData = {
-        //             email:data.email_addresses[0].email_address,
-        //             firstName: data.first_name,
-        //             lastName: data.last_name,
-        //             photo: data.image_url,
-        //         }
+            case "user.updated": {
+                const userData = {
+                    email:data.email_addresses[0].email_address,
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                    photo: data.image_url,
+                }
 
-        //         await userModel.findOneAndUpdate({ clerkId: data.id }, userData);
-        //         res.json({})
-        //         break;
-        //     }
+                await userModel.findOneAndUpdate({ clerkId: data.id }, userData);
+                res.json({})
+                break;
+            }
 
-        //     case "user.deleted": {
-        //         await userModel.findOneAndDelete({ clerkId: data.id });
-        //         res.json({})
-        //         break;
-        //     }
+            case "user.deleted": {
+                await userModel.findOneAndDelete({ clerkId: data.id });
+                res.json({})
+                break;
+            }
 
-        //     default:
-        //         break;
-        // }
-        let newUser = new userModel({
-            ...req.body
-        });
-        let savedUser = await newUser.save();
-        res.json({success: true, message: "User saved successfully", data: savedUser})
+            default:
+                break;
+        }
+        // let newUser = new userModel({
+        //     ...req.body
+        // });
+        // let savedUser = await newUser.save();
+        // res.json({success: true, data: savedUser})
     } catch (error) {
         console.log(error.message);
         res.json({success: false, message:error.message})
