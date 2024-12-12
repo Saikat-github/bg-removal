@@ -15,10 +15,7 @@ app.use(cors());
 
 
 //DB connection
-await connectDB().catch((err) => {
-    console.error("Failed to connect to the database. Exiting...");
-    process.exit(1); // Exit the process with failure code
-});
+await connectDB()
 
 
 //API routes
