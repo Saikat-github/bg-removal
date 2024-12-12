@@ -8,11 +8,17 @@ import userRouter from './routes/userRoute.js';
 //App Config
 const PORT = process.env.PORT || 8080;
 const app = express();
-connectDB()
 
 //Initialize middleware
 app.use(express.json());
 app.use(cors());
+
+
+//DB connection
+await connectDB().catch((err) => {
+    console.error("Failed to connect to the database. Exiting...");
+    process.exit(1); // Exit the process with failure code
+});
 
 
 //API routes
