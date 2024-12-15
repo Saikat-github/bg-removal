@@ -1,7 +1,66 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { assets, plans } from '../assets/assets'
+import { AppContext } from '../context/AppContext'
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-const BuyCreadit = () => {
+const BuyCredit = () => {
+
+  const {backendUrl, loadCreditsData } = useContext(AppContext);
+
+  const navigate = useNavigate();
+
+  const { getToken } = useAuth();
+  const initPay = async (order) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+    amount: order.amount,
+    currency: order.currency,
+    name: "Credits Payment",
+    description: "Credits Payment",
+    order_id: order.id,
+    receipt: order.receipt,
+    handler: async (res) => {
+      console.log(res);
+
+      const token = await getToken();
+      try {
+        const {data} = await axios.post(backendUrl+"/api/user/verify-razor", res, {headers: {token}});
+        if (data.success) {
+          loadCreditsData();
+          navigate("/");
+          toast.success("Credits Added")
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
+    }
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+  }
+
+  const paymentRazorpay = async (planId) => {
+    console.log(planId)
+    try {
+      const token = await getToken();
+
+      const {data} = await axios.post(backendUrl+"/api/user/pay-razor", {planId}, {headers: {token}});
+      console.log(data);
+
+      if (data.success) {
+        initPay(data.order)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }
   return (
     <div className='min-h-[75vh] flex flex-col items-center my-10'>
       <p className='border rounded-full py-1 px-3 text-center text-sm'>Our Plans</p>
@@ -20,7 +79,7 @@ const BuyCreadit = () => {
               <p className='text-sm text-gray-600'>/{plan.credits} credits</p>
             </div>
 
-            <button className='px-10 bg-gray-950 text-white text-xs py-2 text-center rounded-md hover:bg-gray-900 transition-all duration-300'>{plan.btn}</button>
+            <button onClick={() => paymentRazorpay(plan.id)} className='px-10 bg-gray-950 text-white text-xs py-2 text-center rounded-md hover:bg-gray-900 transition-all duration-300'>{plan.btn}</button>
           </div>
         ))}
       </div>
@@ -28,4 +87,4 @@ const BuyCreadit = () => {
   )
 }
 
-export default BuyCreadit
+export default BuyCredit

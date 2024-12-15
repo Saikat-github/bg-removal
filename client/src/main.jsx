@@ -5,8 +5,9 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Result from './pages/Result.jsx'
-import BuyCreadit from './pages/BuyCreadit.jsx'
+import BuyCredit from './pages/BuyCreadit.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
+import AppContextProvider from './context/AppContext.jsx'
 
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -19,7 +20,11 @@ if (!PUBLISHABLE_KEY) {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <AppContextProvider>
+        <App />
+      </AppContextProvider>
+    ),
     children: [
       {
         path: "/",
@@ -31,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/buy",
-        element: <BuyCreadit />
+        element: <BuyCredit />
       }
     ]
   }
@@ -41,7 +46,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
     </ClerkProvider>
   </StrictMode>,
 )
