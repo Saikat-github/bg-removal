@@ -146,12 +146,12 @@ const verifyRazorpay = async (req, res) => {
         const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
 
         if (orderInfo.status !== "paid") {
-            return res.status(400).json({ success: false, message: "Payment failed" });
+            return res.json({ success: false, message: "Payment failed" });
         }
 
         const transactionData = await transactionModel.findById(orderInfo.receipt);
         if (transactionData.payment) {
-            return res.status(400).json({ success: false, message: "Payment already processed" });
+            return res.json({ success: false, message: "Payment already processed" });
         }
 
         // Update user credits and mark payment as complete
