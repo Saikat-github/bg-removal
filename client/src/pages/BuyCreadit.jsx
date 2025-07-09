@@ -26,8 +26,6 @@ const BuyCredit = () => {
       order_id: order.id,
       receipt: order.receipt,
       handler: async (res) => {
-        console.log(res);
-
         const token = await getToken();
         try {
           const { data } = await axios.post(backendUrl + "/api/user/verify-razor", res, { headers: { token } });
@@ -39,7 +37,6 @@ const BuyCredit = () => {
             toast.error(data.message)
           }
         } catch (error) {
-          console.log(error);
           toast.error("Payment verification failed");
         }
       }
@@ -63,7 +60,6 @@ const BuyCredit = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      console.log(error);
       toast.error("Payment initiation failed");
     } finally {
       setLoader(false);
