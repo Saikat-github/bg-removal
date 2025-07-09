@@ -70,7 +70,9 @@ const userCredits = async (req, res) => {
         const { clerkId } = req.body;
 
         const userData = await userModel.findOne({ clerkId });
-
+        if (!userData) {
+            return res.json({success: false, message: "No user data found!"})
+        }
         res.json({ success: true, credits: userData.creditBalance });
     } catch (error) {
         console.log(error.message);

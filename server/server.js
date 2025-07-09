@@ -10,9 +10,19 @@ import imageRouter from './routes/imageRoute.js';
 const PORT = process.env.PORT || 8080;
 const app = express();
 
+
+// ✅ Allowed origins
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+];
+
 //Initialize middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true  
+}));
+
 
 
 //DB connection
